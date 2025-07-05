@@ -1,0 +1,13 @@
+ipython
+jupyterlab
+matplotlib
+mkdocs
+notebook
+numpy
+pandas
+pip
+python-dotenv
+ruff
+scikit-learn
+sentence-transformers
+-e .
