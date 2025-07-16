@@ -1,4 +1,6 @@
+fastapi
 ipython
+joblib
 jupyterlab
 matplotlib
 mkdocs
