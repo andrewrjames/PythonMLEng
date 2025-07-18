@@ -6,9 +6,12 @@ from typing import List
 import os
 import joblib
 from sentence_transformers import SentenceTransformer
-
+import logging
 
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load models once
 def load_svm_model(model_path = 'svm.joblib'):
@@ -21,15 +24,18 @@ def load_svm_model(model_path = 'svm.joblib'):
         model = joblib.load(models_path)
         return model
     except FileNotFoundError:
-        print(f"Error: Model file '{model_path}' not found in models folder.")
-        print(f"Looking for: {models_path}")
+        logger.error(f"Error: Model file '{model_path}' not found in models folder: {models_path}.")
+        
         raise
     except Exception as e:
-        print(f"Error loading model: {e}")
+        logger.error(f"Error loading model: {e}")
         raise
 
 svm_model = load_svm_model()
+logger.info("SVM model loaded successfully.")
+
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+logger.info("Embedding model loaded successfully.")
 
 @app.get('/status')
 def status():
@@ -42,6 +48,8 @@ class HeadlineData(BaseModel):
 @app.post('/score_headlines')
 def score_headlines(client_props: HeadlineData):
     try:
+        logger.info(f"Processing {len(client_props.headlines)} headlines for scoring.")
+
         # Vectorize headlines using sentence transformer models
         embeddings = embedding_model.encode(client_props.headlines)
 
@@ -53,6 +61,7 @@ def score_headlines(client_props: HeadlineData):
 
         return {'labels': predictions_labels}
     except Exception as e:
+        logger.error(f"Error scoring headlines: {e}")
         return {'error': str(e)}
 
-# fastapi dev serve_post_json.py
+# fastapi dev score_headlines_api.py --host 0.0.0.0 --port 8009 
