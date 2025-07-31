@@ -1,4 +1,4 @@
-fastapi
+fastapi[standard]
 ipython
 joblib
 jupyterlab
@@ -12,4 +12,5 @@ python-dotenv
 ruff
 scikit-learn
 sentence-transformers
+streamlit
 -e .
