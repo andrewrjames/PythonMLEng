@@ -4,15 +4,29 @@ import pandas as pd
 
 st.title("News Headline Sentiment Analyzer")
 
-headline = st.text_area("Enter a news headline:")
+if "user_headline" not in st.session_state:
+    st.session_state.user_headline = ""  # Initialize session state variable if it doesn't exist
+
+def clear_text():
+    st.session_state.user_headline = ""  # Clear the text area by resetting the session state
+
+headline = st.text_area("Enter a news headline:", 
+                        key = 'user_headline', 
+                        placeholder="e.g. 'Stock market hits record high, analysts optimistic'")
+
+col1, col2, col3 = st.columns([1, 1, 2])
+with col1:
+    analyze_sentiment_clicked = st.button("Analyze Sentiment")
+
+with col2:
+    st.button("Delete Text", on_click = clear_text)
 
 st.feedback("thumbs")
 
 HOST = 'localhost'
-PORT = 8009
+PORT =  8009
 
-
-if st.button("Analyze Sentiment"):
+if analyze_sentiment_clicked:
     list_of_headlines = [headline.strip() for headline in headline.split(",")]
     if list_of_headlines:
         response = requests.post(url=f'http://{HOST}:{PORT}/score_headlines',
